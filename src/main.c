@@ -4,14 +4,14 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#include "opcodes.h"
-#include "cpu.h"
+#include "core/opcodes.h"
+#include "core/cpu.h"
 
 // Inicializa los registros del microprocesador
 int main(int argc, char *argv[]) {
     // Si no se pasan los parametros necesarios
     if(argc < 6) {    
-        printf("El programa debe ejecutarse con los siguientes parametros:\n./tp1 [nombre de archivo rom]\n-log [nombre de archivo para setear el log]\n-halt o -ciclos [numero de instruccion hexadecimal o numero de ciclos]\n");
+        printf("El programa debe ejecutarse con los siguientes parametros:\n./mos6502 [nombre de archivo rom]\n-log [nombre de archivo para setear el log]\n-halt o -ciclos [numero de instruccion hexadecimal o numero de ciclos]\n");
         return 1;
     }
 
