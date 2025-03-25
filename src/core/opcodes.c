@@ -1,4 +1,4 @@
-#include "dicc.h"
+#include "opcodes.h"
 
 dicc_t diccionario[] = {
     [0x69] = {inmediato, adc, 2}, 

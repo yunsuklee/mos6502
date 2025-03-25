@@ -3,9 +3,9 @@
 
 #include <stdint.h>
 
-#include "mos6502.h"
-#include "operaciones.h"
-#include "direccionamiento.h"
+#include "cpu.h"
+#include "instructions.h"
+#include "addressing.h"
 
 typedef void (*operacion_t)(mos6502_t *, instruccion_t *);
 typedef void (*direcc_t)(mos6502_t *, instruccion_t *);

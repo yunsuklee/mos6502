@@ -1,5 +1,5 @@
-#include "mos6502.h"
-#include "dicc.h"
+#include "cpu.h"
+#include "opcodes.h"
 
 mos6502_t *crear_micro() {
     mos6502_t *m = malloc(sizeof(mos6502_t));

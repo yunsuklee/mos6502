@@ -2,7 +2,7 @@
 #define DIRECCIONAMIENTO
 
 #include <stdlib.h>
-#include "mos6502.h"
+#include "cpu.h"
 
 void implicito(mos6502_t *p, instruccion_t *i);
 void acumulador(mos6502_t *p, instruccion_t *i);

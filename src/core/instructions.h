@@ -4,7 +4,7 @@
 #include <stdint.h>
 
 #include "status.h"
-#include "mos6502.h"
+#include "cpu.h"
 
 void adc(mos6502_t *p, instruccion_t *i);
 void and(mos6502_t *p, instruccion_t *i);

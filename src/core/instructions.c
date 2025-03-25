@@ -1,4 +1,4 @@
-#include "operaciones.h"
+#include "instructions.h"
 
 void adc(mos6502_t *p, instruccion_t *i) {
     uint8_t a = p->a;

@@ -4,8 +4,8 @@
 #include <stdlib.h>
 #include <stdbool.h>
 
-#include "dicc.h"
-#include "mos6502.h"
+#include "opcodes.h"
+#include "cpu.h"
 
 // Inicializa los registros del microprocesador
 int main(int argc, char *argv[]) {

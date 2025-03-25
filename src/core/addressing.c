@@ -1,4 +1,4 @@
-#include "direccionamiento.h"
+#include "addressing.h"
 
 // Modos de direccionamiento de memoria
 
