@@ -10,16 +10,16 @@
 // Inicializa los registros del microprocesador
 int main(int argc, char *argv[]) {
     // Si no se pasan los parametros necesarios
-    if(argc < 6) {    
+    if(argc < 6) {
         printf("El programa debe ejecutarse con los siguientes parametros:\n./mos6502 [nombre de archivo rom]\n-log [nombre de archivo para setear el log]\n-halt o -ciclos [numero de instruccion hexadecimal o numero de ciclos]\n");
         return 1;
     }
 
-    mos6502_t *m = crear_micro();
-    if(m == NULL)
+    cpu_t *cpu = cpu_create();
+    if(cpu == NULL)
         return 1;
 
-    if(!cargar_rom(argv[1], m))
+    if(!cpu_load_rom(cpu, argv[1]))
         return 1;
 
     // Condicion de corte con parametro de ciclos (83007452)
@@ -27,11 +27,11 @@ int main(int argc, char *argv[]) {
         long ejecutados;
         ejecutados = atoi(argv[5]);
 
-        while(m->ciclos < ejecutados) {
+        while(cpu->total_execution_cycles < ejecutados) {
             if(!strcmp(argv[2], "-log"))
-            	set_log(argv[3], m);
+            	cpu_log_state(cpu, argv[3]);
 
-            ejecutar_instruccion(m);
+            cpu_execute_instruction(cpu);
         }
     }
     // Condicion de corte con parametro de instruccion (336d)
@@ -41,17 +41,17 @@ int main(int argc, char *argv[]) {
 
         while(1) {
             if(!strcmp(argv[2], "-log"))
-                set_log(argv[3], m);
+                cpu_log_state(cpu, argv[3]);
 
-            if(m->pc == aux)
+            if(cpu->program_counter == aux)
                 break;
 
-            ejecutar_instruccion(m);
+            cpu_execute_instruction(cpu);
         }
     }
 
-    printf("Ciclos finales: %ld\n", m->ciclos);
-    destruir_micro(m);
+    printf("Ciclos finales: %ld\n", cpu->total_execution_cycles);
+    cpu_destroy(cpu);
     printf("Success!\n");
     return 0;
 }

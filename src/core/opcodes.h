@@ -7,15 +7,15 @@
 #include "instructions.h"
 #include "addressing.h"
 
-typedef void (*operacion_t)(mos6502_t *, instruccion_t *);
-typedef void (*direcc_t)(mos6502_t *, instruccion_t *);
+typedef void (*operacion_t)(cpu_t *, instruction_t *);
+typedef void (*direcc_t)(cpu_t *, instruction_t *);
 
-typedef struct {   
+typedef struct {
     direcc_t direccionamiento;
-    operacion_t operacion;   
+    operacion_t operacion;
     uint8_t ciclos;
 } dicc_t;
 
-extern dicc_t diccionario[]; 
+extern dicc_t diccionario[];
 
 #endif
