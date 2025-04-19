@@ -3,86 +3,86 @@
 // Modos de direccionamiento de memoria
 
 // No indexados, no en memoria
-void implicito(mos6502_t *p, instruccion_t *i) {
-	i->m = NULL;
+void implicito(cpu_t *cpu, instruction_t *instruction) {
+	instruction->operand = NULL;
 }
 
-void acumulador(mos6502_t *p, instruccion_t *i) {
-    i->m = &(p->a);
+void acumulador(cpu_t *cpu, instruction_t *instruction) {
+    instruction->operand = &(cpu->accumulator);
 }
 
-void inmediato(mos6502_t *p, instruccion_t *i) {
-    i->m = &(p->mem[p->pc++]);
+void inmediato(cpu_t *cpu, instruction_t *instruction) {
+    instruction->operand = &(cpu->memory[cpu->program_counter++]);
 }
 
 // No indexados, en memoria
-void relativo(mos6502_t *p, instruccion_t *i) {
-	i->m = &(p->mem[p->pc++]);
+void relativo(cpu_t *cpu, instruction_t *instruction) {
+	instruction->operand = &(cpu->memory[cpu->program_counter++]);
 }
 
-void absoluto(mos6502_t *p, instruccion_t *i) {
-    i->direccion = p->mem[p->pc++];
-    i->direccion |= p->mem[p->pc++] << 8;
-    i->m = &(p->mem[i->direccion]);
+void absoluto(cpu_t *cpu, instruction_t *instruction) {
+    instruction->operand_address = cpu->memory[cpu->program_counter++];
+    instruction->operand_address |= cpu->memory[cpu->program_counter++] << 8;
+    instruction->operand = &(cpu->memory[instruction->operand_address]);
 }
 
-void pagina_cero(mos6502_t *p, instruccion_t *i) {
-	i->direccion = p->mem[p->pc++];
-	i->m = &(p->mem[i->direccion]);
+void pagina_cero(cpu_t *cpu, instruction_t *instruction) {
+	instruction->operand_address = cpu->memory[cpu->program_counter++];
+	instruction->operand = &(cpu->memory[instruction->operand_address]);
 }
 
-void indirecto(mos6502_t *p, instruccion_t *i) {
-	i->direccion = p->mem[p->pc++];
-    i->direccion |= p->mem[p->pc++] << 8;
-    uint16_t aux = i->direccion;
-    i->direccion = p->mem[aux++];
-    i->direccion |= p->mem[aux] << 8;
+void indirecto(cpu_t *cpu, instruction_t *instruction) {
+	instruction->operand_address = cpu->memory[cpu->program_counter++];
+    instruction->operand_address |= cpu->memory[cpu->program_counter++] << 8;
+    uint16_t aux = instruction->operand_address;
+    instruction->operand_address = cpu->memory[aux++];
+    instruction->operand_address |= cpu->memory[aux] << 8;
 }
 
 // Indexadas
-void absoluto_x(mos6502_t *p, instruccion_t *i) {
-	i->direccion = p->mem[p->pc++];
-	i->direccion |= p->mem[p->pc++] << 8;
-	i->direccion += p->x;
-	i->m = &(p->mem[i->direccion]);
+void absoluto_x(cpu_t *cpu, instruction_t *instruction) {
+	instruction->operand_address = cpu->memory[cpu->program_counter++];
+	instruction->operand_address |= cpu->memory[cpu->program_counter++] << 8;
+	instruction->operand_address += cpu->x_index_register;
+	instruction->operand = &(cpu->memory[instruction->operand_address]);
 }
 
-void absoluto_y(mos6502_t *p, instruccion_t *i) {
-	i->direccion = p->mem[p->pc++];
-	i->direccion |= p->mem[p->pc++] << 8;
-	i->direccion += p->y;
-	i->m = &(p->mem[i->direccion]);
+void absoluto_y(cpu_t *cpu, instruction_t *instruction) {
+	instruction->operand_address = cpu->memory[cpu->program_counter++];
+	instruction->operand_address |= cpu->memory[cpu->program_counter++] << 8;
+	instruction->operand_address += cpu->y_index_register;
+	instruction->operand = &(cpu->memory[instruction->operand_address]);
 }
 
-void pagina_cero_x(mos6502_t *p, instruccion_t *i) {
-	i->direccion = p->mem[p->pc++];
-	i->direccion += p->x;
-	i->direccion &= 0xFF;
-	i->m = &(p->mem[i->direccion]);
+void pagina_cero_x(cpu_t *cpu, instruction_t *instruction) {
+	instruction->operand_address = cpu->memory[cpu->program_counter++];
+	instruction->operand_address += cpu->x_index_register;
+	instruction->operand_address &= 0xFF;
+	instruction->operand = &(cpu->memory[instruction->operand_address]);
 }
 
-void pagina_cero_y(mos6502_t *p, instruccion_t *i) {
-	i->direccion = p->mem[p->pc++];
-	i->direccion += p->y;
-	i->direccion &= 0xFF;
-	i->m = &(p->mem[i->direccion]);
+void pagina_cero_y(cpu_t *cpu, instruction_t *instruction) {
+	instruction->operand_address = cpu->memory[cpu->program_counter++];
+	instruction->operand_address += cpu->y_index_register;
+	instruction->operand_address &= 0xFF;
+	instruction->operand = &(cpu->memory[instruction->operand_address]);
 }
 
-void indirecto_x(mos6502_t *p, instruccion_t *i) {
-	i->direccion = p->mem[p->pc++];
-	i->direccion += p->x;
-	i->direccion &= 0xFF;
-	uint16_t aux = i->direccion;
-    i->direccion = p->mem[aux++];
-    i->direccion |= p->mem[aux] << 8;
-    i->m = &(p->mem[i->direccion]);
+void indirecto_x(cpu_t *cpu, instruction_t *instruction) {
+	instruction->operand_address = cpu->memory[cpu->program_counter++];
+	instruction->operand_address += cpu->x_index_register;
+	instruction->operand_address &= 0xFF;
+	uint16_t aux = instruction->operand_address;
+    instruction->operand_address = cpu->memory[aux++];
+    instruction->operand_address |= cpu->memory[aux] << 8;
+    instruction->operand = &(cpu->memory[instruction->operand_address]);
 }
 
-void indirecto_y(mos6502_t *p, instruccion_t *i) {
-	i->direccion = p->mem[p->pc++];
-    uint16_t aux = i->direccion;
-    i->direccion = p->mem[aux++];
-    i->direccion |= p->mem[aux] << 8;
-    i->direccion += p->y;
-    i->m = &(p->mem[i->direccion]);
+void indirecto_y(cpu_t *cpu, instruction_t *instruction) {
+	instruction->operand_address = cpu->memory[cpu->program_counter++];
+    uint16_t aux = instruction->operand_address;
+    instruction->operand_address = cpu->memory[aux++];
+    instruction->operand_address |= cpu->memory[aux] << 8;
+    instruction->operand_address += cpu->y_index_register;
+    instruction->operand = &(cpu->memory[instruction->operand_address]);
 }
