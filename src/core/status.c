@@ -1,48 +1,60 @@
 #include "status.h"
 
-bool get_status(uint8_t *reg, flag_t flag) {
-    return (*reg & flag);
+bool status_get_flag(const uint8_t *reg, status_flag_t flag) {
+    return (*reg & flag) != 0;
 }
 
-void set_status(uint8_t *reg, flag_t flag, bool status) {
+void status_set_flag(uint8_t *reg, status_flag_t flag, bool status) {
     if(status)
         *reg |= flag;
     else
-        *reg &= (~flag);
+        *reg &= ~flag;
 }
 
-void set_zero(uint8_t *reg, uint8_t res) {
-    set_status(reg, ZERO, res == 0);
+void status_set_carry_flag(uint8_t *reg, uint16_t result) {
+    status_set_flag(reg, FLAG_CARRY, (result & BIT_8) != 0);
 }
 
-void set_negative(uint8_t *reg, uint8_t res) {
-    set_status(reg, NEGATIVE, res & 0x80);
+void status_set_zero_flag(uint8_t *reg, uint8_t result) {
+    status_set_flag(reg, FLAG_ZERO, result == 0);
 }
 
-void set_carry(uint8_t *reg, uint16_t res) {
-    set_status(reg, CARRY, res & 0x100);
+void status_set_overflow_flag(uint8_t *reg, uint8_t operand_a, uint8_t operand_b, uint8_t result) {
+    /*
+    * Set the overflow flag when:
+    * 1. Both operands have the same sign bit (both positive or both negative)
+    * 2. The result's sign bit differs from the operands' sign bit
+    *
+    * This detects a signed overflow in two's complement arithmetic
+    */
+   bool operands_same_sign = ((operand_a & BIT_7) == (operand_b & BIT_7));
+   bool result_diff_sign = ((operand_b & BIT_7) != (result & BIT_7));
+
+   status_set_flag(reg, FLAG_OVERFLOW, operands_same_sign && result_diff_sign);
 }
 
-void set_overflow(uint8_t *reg, uint8_t a, uint8_t b, uint8_t res) {
-    set_status(reg, OVERFLOW, ((a & 0x80) == (b & 0x80)) && ((a & 0x80) != (res & 0x80)));
+void status_set_negative_flag(uint8_t *reg, uint8_t result) {
+    status_set_flag(reg, FLAG_NEGATIVE, (result & BIT_7) != 0);
 }
 
-void rotate_left(uint8_t *reg, uint8_t *x) {
-    uint8_t bit_caido = (*x & 0x80);
-    *x <<= 1; 
+void status_rotate_left(uint8_t *reg, uint8_t *value) {
+    bool is_high_bit_set = (*value & BIT_7) != 0;
 
-    if(get_status(reg, CARRY))
-        *x |= 0x01;
+    *value <<= 1;
 
-    set_status(reg, CARRY, bit_caido);
+    if(status_get_flag(reg, FLAG_CARRY))
+        *value |= BIT_0;
+
+    status_set_flag(reg, FLAG_CARRY, is_high_bit_set);
 }
 
-void rotate_right(uint8_t *reg, uint8_t *x) {
-    uint8_t bit_caido = (*x & 0x01);
+void status_rotate_right(uint8_t *reg, uint8_t *x) {
+    bool is_low_bit_set = (*x & BIT_0) != 0;
+
     *x >>= 1;
 
-    if(get_status(reg, CARRY))
-        *x |= 0x80;
+    if(status_get_flag(reg, FLAG_CARRY))
+        *x |= BIT_7;
 
-    set_status(reg, CARRY, bit_caido);
+    status_set_flag(reg, FLAG_CARRY, is_low_bit_set);
 }

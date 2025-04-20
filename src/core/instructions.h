@@ -19,7 +19,7 @@ void bpl(cpu_t *cpu, instruction_t *instruction);
 void brk(cpu_t *cpu, instruction_t *instruction);
 void bvc(cpu_t *cpu, instruction_t *instruction);
 void bvs(cpu_t *cpu, instruction_t *instruction);
-void clear(cpu_t *cpu, flag_t flag);
+void clear(cpu_t *cpu, status_flag_t flag);
 void clc(cpu_t *cpu, instruction_t *instruction);
 void cld(cpu_t *cpu, instruction_t *instruction);
 void cli(cpu_t *cpu, instruction_t *instruction);
