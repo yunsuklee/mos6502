@@ -1,5 +1,5 @@
-#ifndef DICCIONARIO
-#define DICCIONARIO
+#ifndef OPCODES_H
+#define OPCODES_H
 
 #include <stdint.h>
 
@@ -7,15 +7,24 @@
 #include "instructions.h"
 #include "addressing.h"
 
-typedef void (*operacion_t)(cpu_t *, instruction_t *);
-typedef void (*direcc_t)(cpu_t *, instruction_t *);
+/**
+ * Function pointer type for instruction operations
+ * Points to functions that implement CPU instructions
+ */
+typedef void (*instruction_operation_t)(cpu_t *cpu, instruction_t *instruction);
+
+/**
+ * Function pointer type for addressing modes
+ * Points to functions that implement different CPU addressing modes
+ */
+typedef void (*addressing_mode_t)(cpu_t *cpu, instruction_t *instruction);
 
 typedef struct {
-    direcc_t direccionamiento;
-    operacion_t operacion;
-    uint8_t ciclos;
-} dicc_t;
+    addressing_mode_t addressing_mode;
+    instruction_operation_t operation;
+    uint8_t cycles;
+} opcode_t;
 
-extern dicc_t diccionario[];
+extern opcode_t opcodes_dictionary[];
 
 #endif
