@@ -56,9 +56,9 @@ void cpu_execute_instruction(cpu_t *cpu) {
     instruction_t instruction;
     instruction.opcode = cpu_fetch_opcode(cpu);
 
-    instruction.required_execution_cycles = diccionario[instruction.opcode].ciclos;
-    diccionario[instruction.opcode].direccionamiento(cpu, &instruction);
-    diccionario[instruction.opcode].operacion(cpu, &instruction);
+    instruction.required_execution_cycles = opcodes_dictionary[instruction.opcode].cycles;
+    opcodes_dictionary[instruction.opcode].addressing_mode(cpu, &instruction);
+    opcodes_dictionary[instruction.opcode].operation(cpu, &instruction);
 
     cpu->total_execution_cycles += instruction.required_execution_cycles;
 }
