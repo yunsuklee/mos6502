@@ -29,6 +29,7 @@ typedef struct {
     uint8_t *operand;
     uint16_t operand_address;
     short required_execution_cycles;
+    bool page_boundary_crossed;
 } instruction_t;
 
 cpu_t *cpu_create(void);
