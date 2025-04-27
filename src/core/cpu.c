@@ -11,8 +11,8 @@ static void initialize_cpu_registers(cpu_t *cpu) {
     cpu->x_index_register = 0;
     cpu->y_index_register = 0;
     cpu->program_counter = 0;
-    cpu->status_register = 0x00;
-    cpu->stack_pointer = 0xFF;
+    cpu->status_register = CPU_STATUS_CLEAR;
+    cpu->stack_pointer = CPU_STACK_INIT;
     cpu->total_execution_cycles = 0;
 }
 
@@ -40,7 +40,11 @@ void cpu_reset(cpu_t *cpu, uint8_t *memory, uint16_t program_counter) {
     cpu->x_index_register = 0;
     cpu->y_index_register = 0;
     cpu->status_register = CPU_STATUS_CLEAR;
-    cpu->memory = memory;
+
+    if (memory != NULL) {
+        cpu->memory = memory;
+    }
+
     cpu->program_counter = program_counter;
     cpu->stack_pointer = CPU_STACK_INIT;
     cpu->total_execution_cycles = 0;
@@ -55,10 +59,16 @@ static uint8_t cpu_fetch_opcode(cpu_t *cpu) {
 void cpu_execute_instruction(cpu_t *cpu) {
     instruction_t instruction;
     instruction.opcode = cpu_fetch_opcode(cpu);
+    instruction.page_boundary_crossed = false;
 
     instruction.required_execution_cycles = opcodes_dictionary[instruction.opcode].cycles;
     opcodes_dictionary[instruction.opcode].addressing_mode(cpu, &instruction);
     opcodes_dictionary[instruction.opcode].operation(cpu, &instruction);
+
+    if (instruction.page_boundary_crossed &&
+        opcodes_dictionary[instruction.opcode].extra_cycle_for_page_cross) {
+        instruction.required_execution_cycles++;
+    }
 
     cpu->total_execution_cycles += instruction.required_execution_cycles;
 }
@@ -79,13 +89,14 @@ static void cpu_set_program_counter_from_reset_vector(cpu_t *cpu) {
     uint8_t high_byte = cpu->memory[CPU_RESET_VECTOR_HIGH];
 
     // Combine bytes to form 16-bit address (little-endian)
-    cpu->program_counter = low_byte | (high_byte << 8);
+    cpu->program_counter = low_byte | (high_byte << BIT_SHIFT_BYTE);
 }
 
 bool cpu_load_rom(cpu_t *cpu, const char *rom_path) {
     FILE *rom_file = fopen(rom_path, "rb");
-    if(rom_file == NULL)
+    if(rom_file == NULL) {
         return false;
+    }
 
     size_t bytes_loaded = cpu_load_rom_into_memory(cpu, rom_file);
 
@@ -97,8 +108,9 @@ bool cpu_load_rom(cpu_t *cpu, const char *rom_path) {
 
 bool cpu_log_state(cpu_t *cpu, const char *log_file_path) {
     FILE *log_file = fopen(log_file_path, "a");
-    if(log_file == NULL)
+    if(log_file == NULL) {
         return false;
+    }
 
     // Format: PC A X Y Status SP
     fprintf(log_file, "%04x %02x %02x %02x %02x %02x\n",
