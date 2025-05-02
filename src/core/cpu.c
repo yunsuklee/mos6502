@@ -74,7 +74,7 @@ void cpu_execute_instruction(cpu_t *cpu) {
 }
 
 static size_t cpu_load_rom_into_memory(cpu_t *cpu, FILE *rom_file) {
-    uint16_t bytes_loaded = 0;
+    size_t bytes_loaded = 0;
 
     while(bytes_loaded < CPU_MEMORY_SIZE &&
           fread(&cpu->memory[bytes_loaded], sizeof(uint8_t), 1, rom_file) == 1) {

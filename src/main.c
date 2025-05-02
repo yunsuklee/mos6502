@@ -16,11 +16,13 @@ int main(int argc, char *argv[]) {
     }
 
     cpu_t *cpu = cpu_create();
-    if(cpu == NULL)
+    if(cpu == NULL) {
         return 1;
+    }
 
-    if(!cpu_load_rom(cpu, argv[1]))
+    if(!cpu_load_rom(cpu, argv[1])) {
         return 1;
+    }
 
     // Condicion de corte con parametro de ciclos (83007452)
     if(!strcmp(argv[4], "-ciclos")) {
