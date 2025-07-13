@@ -1,7 +1,8 @@
 bin/
 obj/
+log/
 logs/
-log.txt
+log.*
 
 *.rom
 
