@@ -70,7 +70,7 @@ int main(int argc, char *argv[]) {
     uint16_t halt_address = 0;
     long target_cycles = 0;
 
-    // Paarse optional flags
+    // Parse optional flags
     for (int i = 2; i < argc; i++) {
         if (strcmp(argv[i], "-halt") == 0) {
             if (i + 1 >= argc) {
@@ -132,7 +132,7 @@ int main(int argc, char *argv[]) {
     // Create CPU
     cpu_t *cpu = cpu_create();
     if(cpu == NULL) {
-        printf("Error: Failed to create CPU/n");
+        printf("Error: Failed to create CPU\n");
         return 1;
     }
 
