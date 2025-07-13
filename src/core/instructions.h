@@ -2,6 +2,7 @@
 #define INSTRUCTIONS_H
 
 #include <stdint.h>
+#include <stdbool.h>
 
 #include "status.h"
 #include "cpu.h"
@@ -62,7 +63,7 @@ void dey(cpu_t *cpu, instruction_t *instruction); // Decrement Y register
 
 /* Register transfer operations */
 void tax(cpu_t *cpu, instruction_t *instruction); // Transfer A to X
-void tay(cpu_t *cpu, instruction_t *instruction); // Transfer A to T
+void tay(cpu_t *cpu, instruction_t *instruction); // Transfer A to Y
 void txa(cpu_t *cpu, instruction_t *instruction); // Transfer X to A
 void tya(cpu_t *cpu, instruction_t *instruction); // transfer Y to A
 void tsx(cpu_t *cpu, instruction_t *instruction); // Transfer stack pointer to X
