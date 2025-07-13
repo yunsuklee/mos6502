@@ -4,10 +4,11 @@
 #include <stdlib.h>
 #include <stdbool.h>
 #include <sys/stat.h>
+#include <errno.h>
 
 #include "core/cpu.h"
 
-#define DEFAULT_LOG_PATH "log/log.txt"
+#define DEFAULT_LOG_PATH "logs/log.txt"
 
 void print_usage(const char *program_name) {
     printf("Usage: %s <rom_file> [-halt <address> | -cycles <count>] [-log <log_file>]\n\n", program_name);
