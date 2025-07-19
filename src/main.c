@@ -11,16 +11,20 @@
 #define DEFAULT_LOG_PATH "logs/log.txt"
 
 void print_usage(const char *program_name) {
-    printf("Usage: %s <rom_file> [-halt <address> | -cycles <count>] [-log <log_file>]\n\n", program_name);
+    printf("Usage: %s <rom_file> [options]\n\n", program_name);
     printf("Arguments:\n");
     printf("  <rom_file>           ROM file to load (required)\n");
     printf("  -halt <address>      Stop execution at hexadecimal address (e.g., 336d)\n");
     printf("  -cycles <count>      Stop execution after specified number of cycles\n");
-    printf("  -log <log_file>      Log CPU state to file (optional, defaults to %s)\n\n", DEFAULT_LOG_PATH);
+    printf("  -log <log_file>      Log CPU state to file (optional, defaults to %s)\n", DEFAULT_LOG_PATH);
+    printf("  -nolog               Disable logging\n\n");
+    printf("If neither -halt nor -cycles is specified, the program will run until\n");
+    printf("it writes to the halt port ($E001) or encounters an infinite loop.\n\n");
     printf("Examples:\n");
-    printf("  %s game.rom -cycles 1000\n", program_name);
-    printf("  %s game.rom -halt 336d -log debug.txt\n", program_name);
-    printf("  %s game.rom -cycles 5000 -log states.log\n", program_name);
+    printf("  %s hello.rom                    # Run until program halts\n", program_name);
+    printf("  %s game.rom -cycles 1000        # Run for 1000 cycles\n", program_name);
+    printf("  %s game.rom -halt 336d          # Stop at address 0x336d\n", program_name);
+    printf("  %s game.rom -nolog              # Run without logging\n", program_name);
 }
 
 bool create_log_directory(const char *log_path) {
@@ -55,8 +59,8 @@ bool create_log_directory(const char *log_path) {
 }
 
 int main(int argc, char *argv[]) {
-    // Minimum arguments: program_name, rom_file, halt_or_cycles_flag, value
-    if (argc < 4) {
+    // Minimum arguments: program_name, rom_file
+    if (argc < 2) {
         print_usage(argv[0]);
         return 1;
     }
@@ -115,18 +119,14 @@ int main(int argc, char *argv[]) {
             log_file = argv[i + 1];
             i++; // Skip the filename argument
         }
+        else if (strcmp(argv[i], "-nolog") == 0) {
+            enable_logging = false;
+        }
         else {
             printf("Error: Unknown flag '%s'\n", argv[i]);
             print_usage(argv[0]);
             return 1;
         }
-    }
-
-    // Validate that either -halt or -cycles was specified
-    if (!use_halt && !use_cycles) {
-        printf("Error: Must specify either -halt or -cycles flag\n");
-        print_usage(argv[0]);
-        return 1;
     }
 
     // Create CPU
@@ -152,28 +152,33 @@ int main(int argc, char *argv[]) {
     printf("ROM file: %s\n", rom_file);
     if (use_halt) {
         printf("Execution mode: Halt at address 0x%04X\n", halt_address);
-    } else {
+    } else if (use_cycles) {
         printf("Execution mode: Run for %ld cycles\n", target_cycles);
+    } else {
+        printf("Execution mode: Run until program halts\n");
     }
     if (enable_logging) {
         printf("Logging to: %s\n", log_file);
     }
     printf("\n");
 
-    if (use_cycles) {
-        while (cpu->total_execution_cycles < target_cycles) {
-            if (enable_logging) {
-                cpu_log_state(cpu, log_file);
-            }
-            cpu_execute_instruction(cpu);
+    // Main execution loop
+    while (!cpu->halted) {
+        if (enable_logging) {
+            cpu_log_state(cpu, log_file);
         }
-    } else {
-        while (cpu->program_counter != halt_address) {
-            if (enable_logging) {
-                cpu_log_state(cpu, log_file);
-            }
-            cpu_execute_instruction(cpu);
+
+        // Check exit conditions before executing next instruction
+        if (use_cycles && cpu->total_execution_cycles >= target_cycles) {
+            printf("Reached target cycle count (%ld)\n", target_cycles);
+            break;
         }
+        if (use_halt && cpu->program_counter == halt_address) {
+            printf("Reached halt address (0x%04X)\n", halt_address);
+            break;
+        }
+
+        cpu_execute_instruction(cpu);
     }
 
     printf("Execution completed!\n");
