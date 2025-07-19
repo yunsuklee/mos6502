@@ -2,27 +2,28 @@
 
 int tests_run = 0;
 int tests_failed = 0;
+int current_test_failures = 0;
 
-extern int test_cpu_create_destroy();
-extern int test_cpu_reset();
-extern int test_cpu_memory_access();
+extern void test_cpu_create_destroy();
+extern void test_cpu_reset();
+extern void test_cpu_memory_access();
 
-extern int test_status_get_set_flag();
-extern int test_status_carry_flag();
-extern int test_status_zero_flag();
-extern int test_status_negative_flag();
-extern int test_status_overflow_flag();
+extern void test_status_get_set_flag();
+extern void test_status_carry_flag();
+extern void test_status_zero_flag();
+extern void test_status_negative_flag();
+extern void test_status_overflow_flag();
 
-extern int test_lda_instruction();
-extern int test_sta_instruction();
-extern int test_adc_instruction();
-extern int test_sbc_instruction();
+extern void test_lda_instruction();
+extern void test_sta_instruction();
+extern void test_adc_instruction();
+extern void test_sbc_instruction();
 
-extern int test_addressing_immediate();
-extern int test_addressing_absolute();
-extern int test_addressing_zero_page();
-extern int test_addressing_absolute_x();
-extern int test_addressing_zero_page_x();
+extern void test_addressing_immediate();
+extern void test_addressing_absolute();
+extern void test_addressing_zero_page();
+extern void test_addressing_absolute_x();
+extern void test_addressing_zero_page_x();
 
 int main() {
     printf("=== MOS6502 Emulator Test Suite ===\n\n");

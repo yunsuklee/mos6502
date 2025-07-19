@@ -9,7 +9,7 @@ cpu_t *setup_cpu() {
     return cpu;
 }
 
-int test_lda_instruction() {
+void test_lda_instruction() {
     cpu_t *cpu = setup_cpu();
     instruction_t instruction;
     uint8_t value = 0x42;
@@ -35,10 +35,9 @@ int test_lda_instruction() {
     ASSERT(status_get_flag(&cpu->status_register, FLAG_NEGATIVE), "Negative flag should be set for value with bit 7 set");
     
     cpu_destroy(cpu);
-    return 0;
 }
 
-int test_sta_instruction() {
+void test_sta_instruction() {
     cpu_t *cpu = setup_cpu();
     instruction_t instruction;
     
@@ -59,10 +58,9 @@ int test_sta_instruction() {
     ASSERT_EQ_HEX(0x55, cpu->memory[0x1000], "Previous memory location should be unchanged");
     
     cpu_destroy(cpu);
-    return 0;
 }
 
-int test_adc_instruction() {
+void test_adc_instruction() {
     cpu_t *cpu = setup_cpu();
     instruction_t instruction;
     uint8_t value;
@@ -95,10 +93,9 @@ int test_adc_instruction() {
     ASSERT_EQ_HEX(0x31, cpu->accumulator, "ADC should add carry flag to result");
     
     cpu_destroy(cpu);
-    return 0;
 }
 
-int test_sbc_instruction() {
+void test_sbc_instruction() {
     cpu_t *cpu = setup_cpu();
     instruction_t instruction;
     uint8_t value;
@@ -125,5 +122,4 @@ int test_sbc_instruction() {
     ASSERT(status_get_flag(&cpu->status_register, FLAG_NEGATIVE), "Negative flag should be set");
     
     cpu_destroy(cpu);
-    return 0;
 }

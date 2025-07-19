@@ -8,7 +8,7 @@ cpu_t *setup_cpu_addressing() {
     return cpu;
 }
 
-int test_addressing_immediate() {
+void test_addressing_immediate() {
     cpu_t *cpu = setup_cpu_addressing();
     instruction_t instruction = {0};
     
@@ -21,10 +21,9 @@ int test_addressing_immediate() {
     ASSERT_EQ_HEX(0x8001, cpu->program_counter, "PC should be incremented after immediate addressing");
     
     cpu_destroy(cpu);
-    return 0;
 }
 
-int test_addressing_absolute() {
+void test_addressing_absolute() {
     cpu_t *cpu = setup_cpu_addressing();
     instruction_t instruction = {0};
     
@@ -39,10 +38,9 @@ int test_addressing_absolute() {
     ASSERT_EQ_HEX(0x56, *instruction.operand, "Should read from calculated address");
     
     cpu_destroy(cpu);
-    return 0;
 }
 
-int test_addressing_zero_page() {
+void test_addressing_zero_page() {
     cpu_t *cpu = setup_cpu_addressing();
     instruction_t instruction = {0};
     
@@ -56,10 +54,9 @@ int test_addressing_zero_page() {
     ASSERT_EQ_HEX(0x99, *instruction.operand, "Should read from zero page address");
     
     cpu_destroy(cpu);
-    return 0;
 }
 
-int test_addressing_absolute_x() {
+void test_addressing_absolute_x() {
     cpu_t *cpu = setup_cpu_addressing();
     instruction_t instruction = {0};
     
@@ -75,10 +72,9 @@ int test_addressing_absolute_x() {
     ASSERT_EQ_HEX(0x77, *instruction.operand, "Should read from indexed address");
     
     cpu_destroy(cpu);
-    return 0;
 }
 
-int test_addressing_zero_page_x() {
+void test_addressing_zero_page_x() {
     cpu_t *cpu = setup_cpu_addressing();
     instruction_t instruction = {0};
     
@@ -103,5 +99,4 @@ int test_addressing_zero_page_x() {
     ASSERT_EQ_HEX(0x44, *instruction.operand, "Should read from wrapped address");
     
     cpu_destroy(cpu);
-    return 0;
 }
