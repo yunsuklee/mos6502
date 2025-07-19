@@ -7,7 +7,7 @@ TEST_DIR = tests
 OBJ_DIR = obj
 BIN_DIR = bin
 OBJ = $(OBJ_DIR)/main.o $(OBJ_DIR)/instructions.o $(OBJ_DIR)/status.o $(OBJ_DIR)/opcodes.o $(OBJ_DIR)/addressing.o $(OBJ_DIR)/cpu.o
-TEST_OBJ = $(OBJ_DIR)/test_runner.o $(OBJ_DIR)/test_cpu.o $(OBJ_DIR)/test_status.o $(OBJ_DIR)/test_instructions.o $(OBJ_DIR)/test_addressing.o $(OBJ_DIR)/instructions.o $(OBJ_DIR)/status.o $(OBJ_DIR)/opcodes.o $(OBJ_DIR)/addressing.o $(OBJ_DIR)/cpu.o
+TEST_OBJ = $(OBJ_DIR)/test_runner.o $(OBJ_DIR)/test_cpu.o $(OBJ_DIR)/test_status.o $(OBJ_DIR)/test_instructions.o $(OBJ_DIR)/test_addressing.o $(OBJ_DIR)/test_io.o $(OBJ_DIR)/instructions.o $(OBJ_DIR)/status.o $(OBJ_DIR)/opcodes.o $(OBJ_DIR)/addressing.o $(OBJ_DIR)/cpu.o
 EXE = $(BIN_DIR)/mos6502
 TEST_EXE = $(BIN_DIR)/test_runner
 
@@ -68,6 +68,10 @@ $(OBJ_DIR)/test_instructions.o: $(TEST_DIR)/test_instructions.c $(TEST_DIR)/test
 $(OBJ_DIR)/test_addressing.o: $(TEST_DIR)/test_addressing.c $(TEST_DIR)/test_framework.h $(CORE_DIR)/addressing.h
 	mkdir -p $(OBJ_DIR)
 	$(CC) $(CFLAGS) -c $(TEST_DIR)/test_addressing.c -o $@
+
+$(OBJ_DIR)/test_io.o: $(TEST_DIR)/test_io.c $(TEST_DIR)/test_framework.h $(CORE_DIR)/cpu.h
+	mkdir -p $(OBJ_DIR)
+	$(CC) $(CFLAGS) -c $(TEST_DIR)/test_io.c -o $@
 
 clean:
 	$(RM) -r $(BIN_DIR) $(OBJ_DIR)

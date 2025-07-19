@@ -25,6 +25,8 @@ extern void test_addressing_zero_page();
 extern void test_addressing_absolute_x();
 extern void test_addressing_zero_page_x();
 
+extern int test_io();
+
 int main() {
     printf("=== MOS6502 Emulator Test Suite ===\n\n");
     
@@ -52,6 +54,9 @@ int main() {
     RUN_TEST(test_addressing_zero_page);
     RUN_TEST(test_addressing_absolute_x);
     RUN_TEST(test_addressing_zero_page_x);
+    
+    printf("\n--- Memory-Mapped I/O Tests ---\n");
+    test_io();
     
     TEST_SUMMARY();
     

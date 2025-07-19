@@ -84,6 +84,7 @@ Aims to provide a minimal but effective test suite to cover:
 - **Status Flags** - All flag operations and edge cases  
 - **Instructions** - Critical operations (LDA, STA, ADC, SBC)
 - **Addressing** - Key addressing modes with boundary conditions
+- **Memory-Mapped I/O** - Character output and halt functionality
 
 ## Project Structure
 
