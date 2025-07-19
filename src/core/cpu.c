@@ -14,6 +14,7 @@ static void initialize_cpu_registers(cpu_t *cpu) {
     cpu->status_register = CPU_STATUS_CLEAR;
     cpu->stack_pointer = CPU_STACK_INIT;
     cpu->total_execution_cycles = 0;
+    cpu->halted = false;
 }
 
 cpu_t *cpu_create(void) {
@@ -48,6 +49,7 @@ void cpu_reset(cpu_t *cpu, uint8_t *memory, uint16_t program_counter) {
     cpu->program_counter = program_counter;
     cpu->stack_pointer = CPU_STACK_INIT;
     cpu->total_execution_cycles = 0;
+    cpu->halted = false;
 }
 
 static uint8_t cpu_fetch_opcode(cpu_t *cpu) {
@@ -71,6 +73,31 @@ void cpu_execute_instruction(cpu_t *cpu) {
     }
 
     cpu->total_execution_cycles += instruction.required_execution_cycles;
+}
+
+void cpu_write_memory(cpu_t *cpu, uint16_t address, uint8_t value) {
+    if (address == CPU_CHAR_OUTPUT_PORT) {
+        // Handle character output
+        if (value >= 0x20 && value <= 0x7E) {
+            // Printable ASCII characters
+            putchar(value);
+        } else if (value == 0x0A) {
+            // Line feed - convert to CRLF for better terminal compatibility
+            putchar('\r');
+            putchar('\n');
+        } else if (value == 0x0D) {
+            // Carriage return
+            putchar('\r');
+        }
+        fflush(stdout);
+    } else if (address == CPU_HALT_PORT) {
+        // Handle halt signal - any write to this port halts the CPU
+        cpu->halted = true;
+        printf("Program requested halt (exit code: %d)\n", value);
+    } else {
+        // Normal memory write
+        cpu->memory[address] = value;
+    }
 }
 
 static size_t cpu_load_rom_into_memory(cpu_t *cpu, FILE *rom_file) {

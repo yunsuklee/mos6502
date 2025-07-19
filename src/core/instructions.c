@@ -10,7 +10,7 @@ void load_register(cpu_t *cpu, instruction_t *instruction, uint8_t *target_regis
 
 void store_register(cpu_t *cpu, instruction_t *instruction, uint8_t source_register)
 {
-    *instruction->operand = source_register;
+    cpu_write_memory(cpu, instruction->operand_address, source_register);
 }
 
 void compare_register(cpu_t *cpu, instruction_t *instruction, uint8_t register_value)

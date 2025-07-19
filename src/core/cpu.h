@@ -11,6 +11,8 @@
 #define CPU_STACK_INIT 0xFF
 #define CPU_RESET_VECTOR_LOW 0xFFFC
 #define CPU_RESET_VECTOR_HIGH 0xFFFD
+#define CPU_CHAR_OUTPUT_PORT 0xE000 // Memory-mapped character output
+#define CPU_HALT_PORT 0xE001        // Memory-mapped halt signal
 
 typedef struct {
     uint8_t accumulator;
@@ -22,6 +24,7 @@ typedef struct {
 
     uint8_t *memory;
     long total_execution_cycles;
+    bool halted;
 } cpu_t;
 
 typedef struct {
@@ -39,5 +42,7 @@ void cpu_reset(cpu_t *cpu, uint8_t *memory, uint16_t program_counter);
 void cpu_execute_instruction(cpu_t *cpu);
 bool cpu_load_rom(cpu_t *cpu, const char *rom_path);
 bool cpu_log_state(cpu_t *cpu, const char *log_file_path);
+
+void cpu_write_memory(cpu_t *cpu, uint16_t address, uint8_t value);
 
 #endif
